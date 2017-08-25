@@ -8,8 +8,6 @@ from setuptools import setup, find_packages
 with open('README.rst') as readme_file:
     readme = readme_file.read()
 
-with open('HISTORY.rst') as history_file:
-    history = history_file.read()
 
 requirements = [
     'Click>=6.0',
@@ -27,7 +25,6 @@ setup(
     name='hydrogen',
     version='0.1.0',
     description="'Hidrogeno' is a client library and command line app that solv a programming exercise based on a fictive climatology service.",
-    long_description=readme + '\n\n' + history,
     author="Nicolás Mendoza",
     author_email='nicolas.mendoza@yandex.com',
     url='https://github.com/niccolasmendoza/hydrogen',
