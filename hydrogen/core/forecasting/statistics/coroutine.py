@@ -7,6 +7,7 @@ import collections
 from hydrogen.core.db.models import  WheaterType
 from .elements import RainGauge, PeriodTime
 
+
 _WheaterStatsSummary = collections.namedtuple('WheaterStatsSummary', 'type lenght')
 
 
@@ -26,7 +27,8 @@ class WheaterStatisticAcummulator:
 class WheaterStatsSumary(_WheaterStatsSummary):
     """WheaterStatsSummary es un objeto inmutable que contiene
     resumenes de estadísticas metereológicas disparadas desde una courotine"""
-    pass
+    def saludar(self):
+        print('heeeey locooo')
 
 
 def weather_coroutine_statistics(max_days_to_process):
@@ -78,3 +80,15 @@ def weather_coroutine_statistics(max_days_to_process):
             general_stats.save(WheaterType.DEFAULT)
 
     return WheaterStatsSumary(pluviometer, general_stats)
+
+
+def listen_stream(lenght):
+    """Levantar coroutine. en un escenario real..esto debería
+    ir con un decorator y no usar una cr primitiva con cierre abrupto.
+    :param lenght: cantidad de datos a procesar, después de eso se cierra
+    con un StopIteration.
+    :return: retorna un WheaterStatsSummary
+    """
+    wheater_stats_coro = weather_coroutine_statistics(lenght)
+    next(wheater_stats_coro)
+    return wheater_stats_coro

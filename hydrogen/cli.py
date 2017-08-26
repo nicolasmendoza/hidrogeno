@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import heapq
 import datetime
 import enum
 import logging
@@ -7,6 +6,7 @@ import click
 
 from hydrogen.core.job import WeatherWatcher
 from hydrogen.core.galaxy.simulator import SpaceTime
+from hydrogen.core.forecasting.statistics import coroutine as coro
 
 NOW = datetime.datetime.now()
 
@@ -92,34 +92,30 @@ def show_options(option):
     else:
         click.echo('Debes seleccionar una opción')
 
-
-from collections import Counter, namedtuple
-
-WheaterReport = namedtuple('Result', 'count pluviometer peak_rain_day')
-
-
-
-
-
-
-
-
-
+from hydrogen.core.forecasting.statistics.coroutine import  WheaterStatsSumary
 @click.command()
 @click.option('--year', default=10, prompt='Escriba número de años a calcular. Default:')
 def forecasting_drought(year):
     to_day = 365 * 10
-    click.echo(to_day)
     END_DAY = 360
 
-    # ponemos a escuchar una corutina indicandole cuantos registros espera antes de su cierre automático.
-    wheater_stats_coro = weather_coroutine_statistics(END_DAY)
-    next(wheater_stats_coro)
+    # levantamos coroutine, indicandole cuantos registros esperar antes de su cierre "automático".
+    coro_stats = coro.listen_stream(END_DAY)
+    try:
 
-    with click.progressbar(SpaceTime.galaxy(from_day=0, to_day=END_DAY), length=to_day) as stream:
-        for data in stream:
-            # envíamos el día, el clima, y el nivel de precipitación a una corutina acumuladora.
-            wheater_stats_coro.send((data.day, data.wheater, data.precipitation))
+        with click.progressbar(SpaceTime.galaxy(from_day=0, to_day=END_DAY), length=to_day) as stream:
+            for data in stream:
+                # envíamos el (día, el clima, y el nivel de precipitación) para la generaración de estadísticas.
+                coro_stats.send((data.day, data.wheater, data.precipitation))
+
+    # todo #debt
+    except StopIteration as result:
+        if isinstance(result.value, WheaterStatsSumary):
+            result_stats = result.value
+            click.echo(result_stats.type.level)
+
+        else:
+            raise
 
 if __name__ == "__main__":
     main()
