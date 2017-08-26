@@ -1,7 +1,10 @@
 =========
 hidrógeno
 =========
-*Esto es una librería y utilidad de linea de comando sin ninguna aplicación real, esto se trata de un ejercicio de programación.
+Hydrogen is a library and command line utility.
+
+** Esto no tiene ningún uso real es slo un ejercicio de programación. Esto es un "sistema complejo de predicción" desarrollado por encargo de ingenieros vulcanenses, los vulcanenses viven en una lejana galaxia que comparten con otras tres civilizaciones cada una en su respectivo planeta. Los tres planetas giran en orbitas circulares...
+
 .. image:: https://img.shields.io/travis/niccolasmendoza/hidrogeno.svg
         :target: https://travis-ci.org/nicolasmendoza/hidrogeno
 
@@ -17,11 +20,12 @@ Features
 
 * Job Batcher
 * Data Stream generator.
+* Coroutine stats.
 
-Instalación
+Installation
 -----------
 
-Diseño
+Design
 -----------
 
 
