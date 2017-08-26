@@ -11,8 +11,10 @@ class ClockWise(enum.Enum):
 
 
 class Planet(object):
+    """Representa un planeta."""
+
     def __init__(self, name, velocity, sun_distance, clockwise):
-        """Representa un planeta.
+        """
         :param name: :str: nombre del planeta - pensado para graficar-
         :param velocity: :int: velocidad de desplazamiento del planeta.
         :param sun_distance: :int: distancia del planeta con respecto al Sol.

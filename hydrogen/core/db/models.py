@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """ Database Models.
 """
+import sys
 import enum
+
 
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, BigInteger, Integer, String, create_engine
@@ -10,10 +12,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from hydrogen import conf
 
 Base = declarative_base()
-metadata = Base.metadata
-session = scoped_session(sessionmaker())
 engine = None
-
 
 class WheaterType(enum.Enum):
     """Tipos de clima soportados.
@@ -32,21 +31,36 @@ class WheaterForeCastModel(Base):
     """
     __tablename__ = 'wheaterforecast'
 
-    day = Column(BigInteger, primary_key=True)
+    day = Column(Integer, primary_key=True, index=True)
     wheater = Column(String(512))
     precipitation = Column(Integer, default=0)
 
     @classmethod
-    def insert_bulk(cls, bulk_data):
-        init_db()
-        session.add_all(bulk_data)
-        session.commit()
+    def insert_bulk(cls, bulk_data_list):
+        """Persiste lotes de objectos WheaterForeCastModel
+        :param bulk_data_list: : requiere una lista de objetos de tipo WheaterForeCastModel
+        :return:
+        """
+        if not isinstance(bulk_data_list, list):
+            raise Exception(
+                'Database error. WheaterForeCastModel.insert_bulk expect a list object. '
+                'Received object {}'.format(
+                    type(bulk_data_list)
+                )
+            )
+        try:
+            # inserción de lote & commit.
+            session.add_all(bulk_data_list)
+            session.commit()
+        except:
+            e = sys.exc_info()[0]
+            raise Exception(''
+                            'Database error. please see if you database conf s correct: '
+                            'hydrogen/core/conf'
+                            '', e)
 
-
-def init_db(db_name=conf.DATABASE_URL):
+def setup_database(dburl, echo, num):
     global engine
-    engine = create_engine(db_name, echo=False)
-    session.remove()
-    session.configure(bind=engine, autoflush=False, expire_on_commit=False)
-    metadata.drop_all(engine)
-    metadata.create_all(engine)
+    engine = create_engine(dburl, echo=echo)
+    Base.metadata.drop_all(engine)
+    Base.metadata.create_all(engine)

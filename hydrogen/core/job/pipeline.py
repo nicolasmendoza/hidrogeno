@@ -14,11 +14,9 @@ def wheater_drought(galaxy_report):
 
     WheaterType.DROUGHT
     """
-    return WheaterForeCastModel(
-        day=galaxy_report.day,
-        wheater=WheaterType.DROUGHT.value,
-        precipitation=galaxy_report.get_precipitation
-    )
+    return WheaterForeCastModel(day=galaxy_report.day,
+                                wheater=WheaterType.DROUGHT.value,
+                                precipitation=galaxy_report.get_precipitation)
 
 
 def wheater_rainy(galaxy_report):

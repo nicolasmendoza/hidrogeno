@@ -19,49 +19,58 @@ class PlanetPosition(enum.Enum):
     no_identify = 'position_no_identify' # formación no registrada
 
 
-_GalacticReport = namedtuple('GalaxyStreamReport', 'day position extra_data')
+_GalacticReport = namedtuple('GalaxyStreamReport', 'cycle day position extra_data')
 
 
 class GalacticReport(_GalacticReport):
     """Galactic Report es un objeto inmutable  que contiene
-    información de "streaming" generada por la clase generator SpaceTime
+    información de "streaming" generada por la clase SpaceTime en cada iteration.
+
+    GalaxyReport.cycle : contiene el número de ciclo en que fue generado, los ciclos duran 360 días.
+    GalaxyReport.day: contiene el día en que se generó el reporte.
+    GalaxyReport.position: contiene el tipo de formación -PlanetPosition.- de los astros al momento de generar reporte.
+    GalaxyReport.extra_data: contiene información extra y no común para todos los objetos GalacticReport.
     """
 
-    def whats_wheater(self):
-        """Retorna un tipo de clima de acuerdo a la posición planetaria recibida generada por
-        el  objeto SpaceTime"""
-        if self.position == PlanetPosition.are_aligned:
+    def __repr__(self):
+        return '<simulator.GalaxyReport {} {}>'.format(self.day, self.position)
+
+    @property
+    def wheater(self):
+        """Helper, retorna el tipo de clima de acuerdo a la posición planetaria recibida desde
+        un objeto SpaceTime"""
+        if self.position == PlanetPosition.are_aligned.value:
             return WheaterType.OPTIMUN
-        elif self.position == PlanetPosition.are_aligned_with_sun:
+        elif self.position == PlanetPosition.are_aligned_with_sun.value:
             return WheaterType.DROUGHT
-        elif self.position == PlanetPosition.planets_sun_triangle:
+        elif self.position == PlanetPosition.planets_sun_triangle.value:
             return WheaterType.RAINY
         else:
             return WheaterType.DEFAULT
 
-
     @property
-    def get_precipitation(self):
-        """Retorna la precipitación, en caso de no existir
-        data de precipitación entonces retornará cero"""
-        return 8989
+    def precipitation(self):
+        """Helper, retorna nivel de precipitación basado en el perimetro según datos de SpaceTime"""
+        if self.extra_data:
+            return self.extra_data.get('perimeter', 0)
+        return 0
 
 
 class SpaceTime(object):
-    """Space Time, es un generator que representa el tiempo espacial,
-    es un iterator que permite simular el movimiento espacial que retorna un objecto GalaxyReport
-    conteniendo la información espacial.
+    """Space Time, es un generator que representa el tiempo espacial, es un iterator que
+     permite simular el movimiento espacial, retorna objetos GalaxyReport que contienen la información espacial.
     """
 
     Sun = Point(0, 0)
+    CYCLE_TIME = 360 # los ciclos duran 360 días.
 
     def __init__(self, start_day, end_day, planets):
-        """Space time es un "simulador"
-
+        """
         :param start_day: :int: día de inicio
         :param end_day:  :int: día final -fin del ciclo-
         :param planets: lista de planetas.
         """
+
         self._planets = planets
         self._start_day = start_day
         self._end_day = end_day
@@ -70,15 +79,27 @@ class SpaceTime(object):
         return self
 
     def __next__(self):
-        """Se crea un generator para para presetar la data como stream sin carga todo a memoria"""
+        """Registramos el iterator"""
         if self._start_day <= self._end_day:
+
             # obtenemos información de la galaxia en un día especifico.
             _galaxy_info = self._get_galaxy_info_day(self._start_day)
+
+            if not _galaxy_info:
+                raise RuntimeError('RuntimeError.Trying to obtain ._get_galaxy_info_day, '
+                                   'please check config:'
+                                   'start_day:{}, end_day:{}, with planetas {}'.format(
+                                        self._start_day, self._end_day, self._planets))
             self._start_day += 1
 
             return _galaxy_info
         else:
             raise StopIteration()
+
+    @property
+    def current_year(self):
+        """Retorna el año actual de la galaxia"""
+        return self._start_day
 
     def _get_planets_position_day(self, day):
         """Retorna la posición de los planetas en un día especifico"""
@@ -88,23 +109,23 @@ class SpaceTime(object):
         """Retorna un objeto GalaxyReport que contiene información posicional de los astros
         en la linea de tiempo.
         """
-
-        data_stream = GalacticReport(day, PlanetPosition.no_identify.value, {})
+        current_cycle = int(self.current_year/self.CYCLE_TIME)
+        data_stream = GalacticReport(current_cycle, day, PlanetPosition.no_identify.value, {})
         planet_positions = self._get_planets_position_day(day)
 
         # si los planetas están alineados:
         if calc.are_points_collinear(*planet_positions):
-            data_stream = GalacticReport(day, PlanetPosition.are_aligned.value, {})
+            data_stream = GalacticReport(current_cycle, day, PlanetPosition.are_aligned.value, {})
 
             # si los planetas están alineados con el Sol.
             if calc.are_points_collinear(self.Sun, planet_positions[0], planet_positions[2]):
-                return GalacticReport(day, PlanetPosition.are_aligned_with_sun.value, {})
+                return GalacticReport(current_cycle, day, PlanetPosition.are_aligned_with_sun.value, {})
 
             return data_stream
 
         # si los planetas forman un triángulo y el sol está dentro del triángulo
         elif calc.is_point_inside_triangle(*planet_positions, self.Sun):
-            return GalacticReport(day, PlanetPosition.planets_sun_triangle.value, {
+            return GalacticReport(current_cycle, day, PlanetPosition.planets_sun_triangle.value, {
                 'perimeter': calc.get_perimeter(*planet_positions),
                 'shape': 'triangle'
             })
