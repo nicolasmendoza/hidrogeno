@@ -20,7 +20,10 @@ lib64/
 parts/
 sdist/
 var/
+<<<<<<< HEAD
 wheels/
+=======
+>>>>>>> develop
 *.egg-info/
 .installed.cfg
 *.egg
@@ -43,7 +46,11 @@ htmlcov/
 .cache
 nosetests.xml
 coverage.xml
+<<<<<<< HEAD
 *.cover
+=======
+*,cover
+>>>>>>> develop
 .hypothesis/
 
 # Translations
@@ -52,6 +59,7 @@ coverage.xml
 
 # Django stuff:
 *.log
+<<<<<<< HEAD
 local_settings.py
 
 # Flask stuff:
@@ -60,6 +68,8 @@ instance/
 
 # Scrapy stuff:
 .scrapy
+=======
+>>>>>>> develop
 
 # Sphinx documentation
 docs/_build/
@@ -67,6 +77,7 @@ docs/_build/
 # PyBuilder
 target/
 
+<<<<<<< HEAD
 # Jupyter Notebook
 .ipynb_checkpoints
 
@@ -99,3 +110,7 @@ ENV/
 
 # mypy
 .mypy_cache/
+=======
+# pyenv python configuration file
+.python-version
+>>>>>>> develop
