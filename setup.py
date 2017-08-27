@@ -11,6 +11,7 @@ with open('README.rst') as readme_file:
 
 requirements = [
     'Click>=6.0',
+    'SQLAlchemy==1.1.13'
 ]
 
 setup_requirements = [
@@ -29,11 +30,6 @@ setup(
     author_email='nicolas.mendoza@yandex.com',
     url='https://github.com/niccolasmendoza/hydrogen',
     packages=find_packages(include=['hydrogen']),
-    entry_points={
-        'console_scripts': [
-            'hydrogen=hydrogen.cli:main'
-        ]
-    },
     include_package_data=True,
     install_requires=requirements,
     license="MIT license",
@@ -44,13 +40,9 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
-        "Programming Language :: Python :: 2",
-        'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
     ],
     test_suite='tests',
     tests_require=test_requirements,
