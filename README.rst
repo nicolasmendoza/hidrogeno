@@ -3,7 +3,7 @@ hidrógeno
 =========
 Hydrogen is a library and command line utility.
 
-** la app es un ejercicio de programación.
+* Ejercicio de programación.
 
 
 .. image:: https://img.shields.io/travis/niccolasmendoza/hidrogeno.svg
