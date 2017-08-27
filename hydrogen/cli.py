@@ -6,12 +6,10 @@ import datetime
 import enum
 import click
 
-from hydrogen import conf
-from hydrogen.core.wheater.job import WeatherWatcher
-from hydrogen.core.galaxy.simulator import SpaceTime
-from hydrogen.core.wheater.statistics import coroutine as coro
-from hydrogen.core.wheater.statistics import WheaterStatsSumary
-
+from . import conf
+from .core.wheater.job.watcher import WeatherWatcher
+from .core.wheater.statistics import coroutine as coro
+from .core.wheater.statistics.coroutine import WheaterStatsSumary
 
 NOW = datetime.datetime.now()
 

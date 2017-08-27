@@ -3,7 +3,7 @@
 Es módulo contiene las class iniciales para la simulación
 """
 import enum
-from hydrogen.core.geometry.elements import Point
+from ...core.geometry.elements import Point
 
 
 class ClockWise(enum.Enum):

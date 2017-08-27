@@ -1,56 +1,87 @@
-.PHONY: help clean clean-pyc clean-build list test test-all coverage docs release sdist
+.PHONY: clean clean-test clean-pyc clean-build docs help
+.DEFAULT_GOAL := help
+define BROWSER_PYSCRIPT
+import os, webbrowser, sys
+try:
+	from urllib import pathname2url
+except:
+	from urllib.request import pathname2url
+
+webbrowser.open("file://" + pathname2url(os.path.abspath(sys.argv[1])))
+endef
+export BROWSER_PYSCRIPT
+
+define PRINT_HELP_PYSCRIPT
+import re, sys
+
+for line in sys.stdin:
+	match = re.match(r'^([a-zA-Z_-]+):.*?## (.*)$$', line)
+	if match:
+		target, help = match.groups()
+		print("%-20s %s" % (target, help))
+endef
+export PRINT_HELP_PYSCRIPT
+BROWSER := python -c "$$BROWSER_PYSCRIPT"
 
 help:
-	@echo "clean-build - remove build artifacts"
-	@echo "clean-pyc - remove Python file artifacts"
-	@echo "lint - check style with flake8"
-	@echo "test - run tests quickly with the default Python"
-	@echo "test-all - run tests on every Python version with tox"
-	@echo "coverage - check code coverage quickly with the default Python"
-	@echo "docs - generate Sphinx HTML documentation, including API docs"
-	@echo "release - package and upload a release"
-	@echo "sdist - package"
+	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-clean: clean-build clean-pyc
+clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
 
-clean-build:
+
+clean-build: ## remove build artifacts
 	rm -fr build/
 	rm -fr dist/
-	rm -fr *.egg-info
+	rm -fr .eggs/
+	find . -name '*.egg-info' -exec rm -fr {} +
+	find . -name '*.egg' -exec rm -f {} +
 
-clean-pyc:
+clean-pyc: ## remove Python file artifacts
 	find . -name '*.pyc' -exec rm -f {} +
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name '*~' -exec rm -f {} +
+	find . -name '__pycache__' -exec rm -fr {} +
 
-lint:
-	flake8 hydrogen test
+clean-test: ## remove test and coverage artifacts
+	rm -fr .tox/
+	rm -f .coverage
+	rm -fr htmlcov/
 
-test:
+lint: ## check style with flake8
+	flake8 hydrogen tests
+
+test: ## run tests quickly with the default Python
 	py.test
+	
 
-test-all:
+test-all: ## run tests on every Python version with tox
 	tox
 
-coverage:
-	coverage run --source hydrogen setup.py test
+coverage: ## check code coverage quickly with the default Python
+	coverage run --source hydrogen -m pytest
 	coverage report -m
 	coverage html
-	open htmlcov/index.html
+	$(BROWSER) htmlcov/index.html
 
-docs:
+docs: ## generate Sphinx HTML documentation, including API docs
 	rm -f docs/hydrogen.rst
 	rm -f docs/modules.rst
 	sphinx-apidoc -o docs/ hydrogen
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
-	open docs/_build/html/index.html
+	$(BROWSER) docs/_build/html/index.html
 
-release: clean
+servedocs: docs ## compile the docs watching for changes
+	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
+
+release: clean ## package and upload a release
 	python setup.py sdist upload
 	python setup.py bdist_wheel upload
 
-sdist: clean
+dist: clean ## builds source and wheel package
 	python setup.py sdist
-	python setup.py bdist_wheel upload
+	python setup.py bdist_wheel
 	ls -l dist
+
+install: clean ## install the package to the active Python's site-packages
+	python setup.py install

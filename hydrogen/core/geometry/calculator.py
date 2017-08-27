@@ -19,7 +19,7 @@ Lista Operaciones:
 import math
 import functools
 
-from hydrogen import conf
+from ... import conf
 
 
 @functools.lru_cache(maxsize=None)

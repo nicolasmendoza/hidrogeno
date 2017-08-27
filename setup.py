@@ -8,10 +8,12 @@ from setuptools import setup, find_packages
 with open('README.rst') as readme_file:
     readme = readme_file.read()
 
+with open('HISTORY.rst') as history_file:
+    history = history_file.read()
 
 requirements = [
     'Click>=6.0',
-    'SQLAlchemy==1.1.13'
+    'SQLAlchemy',
 ]
 
 setup_requirements = [
@@ -25,7 +27,8 @@ test_requirements = [
 setup(
     name='hydrogen',
     version='0.1.0',
-    description="'Hidrogeno' is a client library and command line app that solv a programming exercise based on a fictive climatology service.",
+    description="command line utility",
+    long_description=readme + '\n\n' + history,
     author="Nicolás Mendoza",
     author_email='nicolas.mendoza@yandex.com',
     url='https://github.com/niccolasmendoza/hydrogen',
@@ -45,9 +48,13 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
+        "Programming Language :: Python :: 2",
+        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
     ],
     test_suite='tests',
     tests_require=test_requirements,
