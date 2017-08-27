@@ -59,16 +59,12 @@ def main():
 
     opts = {
         CommandLineOption.FORECASTING: 'Pronóstico de Clima por Años. (simulación)',
-
         CommandLineOption.INIT_WHEATER_JOB: 'Volcar datos a bd con las condiciones climáticas de todos los días '
                                             '(utilizando "JOB" para calcularlas)'
     }
-
     click.echo('\nSeleccione una opción:\n')
-
     for opcion, descripcion in opts.items():
         click.echo('[{:d}] {:s}.'.format(opcion, descripcion))
-
     # mostrar opciones
     show_options()
 
@@ -78,8 +74,6 @@ def main():
 def show_options(option):
     """Listado de opciones diponibles.
     """
-    option_selected = click.echo(option)
-
     if option == CommandLineOption.INIT_WHEATER_JOB.value:
         init_db()
     elif option == CommandLineOption.FORECASTING:
