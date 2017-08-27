@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
+"""
+Es módulo contiene las class iniciales para la simulación
+"""
 import enum
-from ..geometry.elements import Point
+from hydrogen.core.geometry.elements import Point
 
 
 class ClockWise(enum.Enum):
-    """Sentido horario, indica giro según manecillas del reloj.
+    """Sentido horario, indica el sentido horario en que se mueve un objeto.
     """
     COUNTERCLOCK = 1
     ANTICLOCK = -1
@@ -20,6 +23,7 @@ class Planet(object):
         :param sun_distance: :int: distancia del planeta con respecto al Sol.
         :param clockwise: :ClockWise: Sentido horario alrededor del sol.
         """
+
         self.name = name
         self._velocity = velocity * clockwise
         self._sun_distance = sun_distance

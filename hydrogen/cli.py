@@ -1,18 +1,27 @@
 # -*- coding: utf-8 -*-
+"""
+Este módulo es el punto de entrada __main__ para la útilidad de comando.
+"""
 import datetime
 import enum
-import logging
 import click
 
-from hydrogen.core.job import WeatherWatcher
+from hydrogen import conf
+from hydrogen.core.wheater.job import WeatherWatcher
 from hydrogen.core.galaxy.simulator import SpaceTime
-from hydrogen.core.forecasting.statistics import coroutine as coro
+from hydrogen.core.wheater.statistics import coroutine as coro
+from hydrogen.core.wheater.statistics import WheaterStatsSumary
+
 
 NOW = datetime.datetime.now()
 
+ONE_HUMAN_YEAR = 365
+ONE_VULCAN_YEAR = 72
+ONE_BETASOIDE_YEAR = 120
+ONE_FERENGI_YEAR = 360
+
 
 def generate_entropy():
-    click.clear()
     click.echo('| |  | (_)   | |')
     click.echo('| |__| |_  __| |')
     click.echo("|  __  | |/ _` | '__/ _ \ / _` |/ _ \ '_ \ / _ ")
@@ -23,12 +32,10 @@ def generate_entropy():
 
 
 class CommandLineOption(enum.IntEnum):
-    """Lista de opciones la de línea de comandos."""
-
-    CALCULATE_WHEATER_RAINY = 1
-    CALCULATE_WHEATER_DROUGHT =2
-    CALCULATE_WHEATER_OPTIMUN = 3
-    INIT_WHEATER_JOB = 4
+    """Lista de opciones de la app, línea de comandos.
+    """
+    FORECASTING = 1
+    INIT_WHEATER_JOB = 2
 
 
 @click.option('--generardatos', default=365*10)
@@ -36,27 +43,22 @@ def init_db():
 
     click.echo('Procesando datos...')
 
-    # creamos wheater watcher y le indicamos
-    watcher = WeatherWatcher(lot_size=3000)
+    # Creamos un object WheaterWatcher y le indicamos el número de lotes a envíar a db.
+    watcher = WeatherWatcher(lot_size=conf.JOB_BATCHER)
+    space_time = SpaceTime.galaxy(from_day=0, to_day=conf.JOB_WORK)
 
-    with click.progressbar(SpaceTime.galaxy(from_day=0, to_day=10000), length=11360) as stream:
+    with click.progressbar(space_time, length=conf.JOB_WORK) as stream:
         for stream_data in stream:
             watcher.analyze(stream_data)
 
-click.echo('Finish!')
+    click.echo('done!')
 
 
 def main():
     generate_entropy()
 
     opts = {
-        CommandLineOption.CALCULATE_WHEATER_DROUGHT: 'Calcular cuántos períodos de sequía habrá.',
-
-        CommandLineOption.CALCULATE_WHEATER_RAINY: 'Calcular cuántos períodos de lluvía habrá y qué día será '
-                                                   'el pico máximo de lluvia',
-
-        CommandLineOption.CALCULATE_WHEATER_OPTIMUN: 'Calcular cuántos períodos de condiciones óptimas de presión '
-                                                     'y temperatura habrá',
+        CommandLineOption.FORECASTING: 'Pronóstico de Clima por Años. (simulación)',
 
         CommandLineOption.INIT_WHEATER_JOB: 'Volcar datos a bd con las condiciones climáticas de todos los días '
                                             '(utilizando "JOB" para calcularlas)'
@@ -67,7 +69,7 @@ def main():
     for opcion, descripcion in opts.items():
         click.echo('[{:d}] {:s}.'.format(opcion, descripcion))
 
-    # Seleccionar opción
+    # mostrar opciones
     show_options()
 
 
@@ -75,45 +77,53 @@ def main():
 @click.option('--option', default=1, prompt='Seleccione una opción:')
 def show_options(option):
     """Listado de opciones diponibles.
-    *esta parte la hice sin mucha dedicación y contratiempo.
     """
     option_selected = click.echo(option)
 
-    #todo #debt sacar festín de elifs, un command pattern u t iría mejor.
-
     if option == CommandLineOption.INIT_WHEATER_JOB.value:
         init_db()
-    elif option == CommandLineOption.CALCULATE_WHEATER_DROUGHT:
-        forecasting_drought()
-    elif option == CommandLineOption.CALCULATE_WHEATER_OPTIMUN:
-        pass
-    elif option == CommandLineOption.CALCULATE_WHEATER_RAINY:
-        pass
+    elif option == CommandLineOption.FORECASTING:
+        forecast_wheater()
     else:
         click.echo('Debes seleccionar una opción')
 
-from hydrogen.core.forecasting.statistics.coroutine import  WheaterStatsSumary
-@click.command()
-@click.option('--year', default=10, prompt='Escriba número de años a calcular. Default:')
-def forecasting_drought(year):
-    to_day = 365 * 10
-    END_DAY = 360
 
-    # levantamos coroutine, indicandole cuantos registros esperar antes de su cierre "automático".
-    coro_stats = coro.listen_stream(END_DAY)
+@click.command()
+@click.option('--years', default=10, prompt='Indique el número de años a predecir. Default (10):')
+def forecast_wheater(years):
+
+    days_to_calculate = 360 * years
+
+    # llamammos subrutina, indicandole cuántos registros procesar antes de su cierre "automático".
+    coro_stats = coro.listen_stream(days_to_calculate)
+
     try:
 
-        with click.progressbar(SpaceTime.galaxy(from_day=0, to_day=END_DAY), length=to_day) as stream:
+        click.echo('preparando simulación de {} años. {} días...'.format(years, days_to_calculate))
+
+        # iniciamos "simulación" planetaria...partiendo del día Cero.
+        data_space_stream = SpaceTime.galaxy(from_day=0, to_day=days_to_calculate)
+
+        with click.progressbar(data_space_stream, length=days_to_calculate) as stream:
+
             for data in stream:
-                # envíamos el (día, el clima, y el nivel de precipitación) para la generaración de estadísticas.
-                coro_stats.send((data.day, data.wheater, data.precipitation))
+                # envíamos el (día, el clima, y el nivel de precipitación) para estadísticas.
+                coro_stats.send(
+                    (data.day, data.wheater, data.precipitation)
+                )
 
-    # todo #debt
     except StopIteration as result:
-        if isinstance(result.value, WheaterStatsSumary):
-            result_stats = result.value
-            click.echo(result_stats.type.level)
 
+        if isinstance(result.value, WheaterStatsSumary):
+
+            # predicciones y datos estadísticos después de la "simulación"
+            forecasting = result.value
+            click.echo('*' * 100)
+
+            # mostramos pronóstico del tiempo...
+            click.echo(forecasting.periods_summary)
+            click.echo(forecasting.pluviometer.summary)
+            click.echo(forecasting.general_stats)
         else:
             raise
 

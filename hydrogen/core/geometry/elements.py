@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Este mdulo contiene los elementos geometricos esenciales para clculos de la aplicación.
-por diseño se ha desacoplado y movido todas las operaciones math a calculator.py
+Este módulo contiene los elementos geométricos esenciales para clculos de la aplicación.
+por diseño temporalmente se han desacoplado y movido todas las operaciones math a calculator.py
 
 """
 import collections

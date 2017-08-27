@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+Este módulo contiene clases relacionadas a la simulación planetaria.
+"""
 import enum
 
 from collections import namedtuple
@@ -58,11 +61,11 @@ class GalacticReport(_GalacticReport):
 
 class SpaceTime(object):
     """Space Time, es un generator que representa el tiempo espacial, es un iterator que
-     permite simular el movimiento espacial, retorna objetos GalaxyReport que contienen la información espacial.
+     permite simular el movimiento espacial, retorna objetos GalaxyReport con la información espacial.
     """
 
     Sun = Point(0, 0)
-    CYCLE_TIME = 360 # los ciclos duran 360 días.
+    CYCLE_TIME = 360  # los ciclos duran 360 días.
 
     def __init__(self, start_day, end_day, planets):
         """
@@ -70,7 +73,6 @@ class SpaceTime(object):
         :param end_day:  :int: día final -fin del ciclo-
         :param planets: lista de planetas.
         """
-
         self._planets = planets
         self._start_day = start_day
         self._end_day = end_day

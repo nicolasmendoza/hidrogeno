@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Este módulo actua de wrapper para las operaciones matematicas requeridas en la app.
+Este módulo actua de wrapper para las operaciones matemáticas requeridas en la app.
 Por diseño ha sido intencional desacoplarlas de las clases, de esta manera podemos
-aplicarles memoization y/o reemplazar los algoritmos base en esta etapa de prototipado.
+aplicarles memoization y/o reemplazar los algoritmos base en esta etapa de prototipado y
+después encapsularlas cmo corresponde.
 
 Lista Operaciones:
 
@@ -18,8 +19,7 @@ Lista Operaciones:
 import math
 import functools
 
-# tolerancia relativa en los calculos, mayor número = menor precisión.
-REL_TOL = 0.001
+from hydrogen import conf
 
 
 @functools.lru_cache(maxsize=None)
@@ -38,11 +38,13 @@ def are_points_collinear(point0, point1, point2):
     ac = get_distance_between_points(point0, point1)
     bc = get_distance_between_points(point2, point1)
 
-    if math.isclose(ac + bc, ab, rel_tol=REL_TOL):
+    # todo #debt #improvement utilizar ccw aprovechando la clase ClockWise
+
+    if math.isclose(ac + bc, ab, rel_tol=conf.REL_TOL):
         return True
-    elif math.isclose(ac + ab, bc, rel_tol=REL_TOL):
+    elif math.isclose(ac + ab, bc, rel_tol=conf.REL_TOL):
         return True
-    elif math.isclose(bc + ab, ac, rel_tol=REL_TOL):
+    elif math.isclose(bc + ab, ac, rel_tol=conf.REL_TOL):
         return True
     else:
         return False
@@ -55,8 +57,10 @@ def get_area(p0, p1, p2):
 
 @functools.lru_cache(maxsize=None)
 def is_point_inside_triangle(p0, p1, p2, px):
-    """Retorna true si el Punto Px está dentro de un triángulo formado por los puntos p0, p1, y p2."""
-    a, b, c, x = p0, p1, p2, px
+    """Retorna true si el Punto Px está dentro de un triángulo formado
+    por los puntos p0, p1, y p2.
+    """
+    a, b, c, x = p0, p1, p2 , px
 
     ab = get_area(x, a, b) < 0.0
     ac = get_area(x, b, c) < 0.0

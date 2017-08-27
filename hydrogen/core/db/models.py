@@ -1,18 +1,21 @@
 # -*- coding: utf-8 -*-
-""" Database Models.
+"""
+Database Models. Este módulo contiene los modelos para persistencia en db relacianods
+a la funcionalidad de "prónostico" / clima.
 """
 import sys
 import enum
 
-
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, BigInteger, Integer, String, create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy import Column, Integer, String, create_engine, MetaData
+from sqlalchemy.orm import sessionmaker
+
 
 from hydrogen import conf
 
 Base = declarative_base()
-engine = None
+metadata = MetaData()
+
 
 class WheaterType(enum.Enum):
     """Tipos de clima soportados.
@@ -25,15 +28,19 @@ class WheaterType(enum.Enum):
 
 class WheaterForeCastModel(Base):
     """ Database model para predicciones.
-    day: día de predicción.
+    day: día al que pertenece la predicción.
     wheater: tipo de clima.
     precipitation: nivel de precipitación
     """
     __tablename__ = 'wheaterforecast'
 
-    day = Column(Integer, primary_key=True, index=True)
-    wheater = Column(String(512))
-    precipitation = Column(Integer, default=0)
+    day = Column(Integer(), primary_key=True)
+    wheater = Column(String(50))
+    precipitation = Column(Integer(), default=0)
+
+    def createSession(self):
+        Session = sessionmaker()
+        self.session = Session.configure(bind=self.engine)
 
     @classmethod
     def insert_bulk(cls, bulk_data_list):
@@ -50,6 +57,8 @@ class WheaterForeCastModel(Base):
             )
         try:
             # inserción de lote & commit.
+            Session = sessionmaker(bind=engine)
+            session = Session()
             session.add_all(bulk_data_list)
             session.commit()
         except:
@@ -59,8 +68,10 @@ class WheaterForeCastModel(Base):
                             'hydrogen/core/conf'
                             '', e)
 
-def setup_database(dburl, echo, num):
-    global engine
-    engine = create_engine(dburl, echo=echo)
-    Base.metadata.drop_all(engine)
-    Base.metadata.create_all(engine)
+
+global engine
+
+engine = create_engine(conf.DATABASE_URL)
+Base.metadata.drop_all(engine)
+Base.metadata.create_all(engine)
+
