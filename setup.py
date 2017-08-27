@@ -30,6 +30,11 @@ setup(
     author_email='nicolas.mendoza@yandex.com',
     url='https://github.com/niccolasmendoza/hydrogen',
     packages=find_packages(include=['hydrogen']),
+    entry_points={
+        'console_scripts': [
+            'hydrogen=hydrogen.cli:main'
+        ]
+    },
     include_package_data=True,
     install_requires=requirements,
     license="MIT license",
