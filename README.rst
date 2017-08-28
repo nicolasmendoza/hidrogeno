@@ -54,17 +54,29 @@ Uso de la librería
 
     from hidrogeno.galaxy.core.simulator import SpaceTime
    
-    # SpaceTime es un generator. galaxy() es un método/shortcut, de clase, que fabrica 
-    # un SpaceTime con los planetas y configuración por defecto.
-    space_time = SpaceTime.galaxy(from_day=0, to_day=3000) 
+    """SpaceTime es un generator, galaxy() es un método/shortcut que fabrica 
+    un SpaceTime con los planetas y la configuración por defecto. 
+    Cuando SpaceTime es recorrido este genera objectos de tipo GalacticReport,
+    los objetos GalacticReport contiene: Día, Ciclo, Posición Planetaria, etc.
+    """
+    days = 3000
+    space_time = SpaceTime.galaxy(from_day=0, to_day=days) 
+    
+    
+    # Subrutina para capturar que recibe stream.
+    from .core.wheater.statistics import coroutine as coro
+    
+    coro_stats = coro.listen_stream(days)
 
-    for stream in space_time:
-         for data in stream:
-                # envíamos el (día, el clima, y el nivel de precipitación) para estadísticas.
-                coro_stats.send(
-                    (data.day, data.wheater, data.precipitation)
-                )
-        
+    
+    for data in stream:  
+           # envíamos el (día, el clima, y el nivel de precipitación) para estadísticas.
+            coro_stats.send(
+            (data.day, data.wheater, data.precipitation)
+            )
+
+     
+        ...
     
 
 Cobertura de tests.
