@@ -14,7 +14,7 @@ Hydrogen is a library and command line utility.
 
 Hidrogeno es una "librería" y línea de comandos escrita en python 3.5 sin uso de ningún framework, si bien la app tiene demasiados "super poderes" para resolver un ejercicio sencillo quise darle un poco más de ficción pensando en una app que necesitaba un nivel de procesamiento/simulación alto. 
 
-Conociendo cuántos períodos climáticos habrá en un ciclo de 360 días nos bastará con multiplicar para saber cuántos habrá en determinado año.
+Conociendo cuántos períodos climáticos hay en un ciclo de 360 días nos bastará con multiplicar para saber cuántos habrá en determinado año.
 
 .. image:: https://raw.githubusercontent.com/nicolasmendoza/hidrogeno/develop/docs/img/hydrogen0.jpg
    :height: 100px
