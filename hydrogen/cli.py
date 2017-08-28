@@ -10,6 +10,7 @@ from . import conf
 from .core.wheater.job.watcher import WeatherWatcher
 from .core.wheater.statistics import coroutine as coro
 from .core.wheater.statistics.coroutine import WheaterStatsSumary
+from .core.galaxy.simulator import SpaceTime
 
 NOW = datetime.datetime.now()
 

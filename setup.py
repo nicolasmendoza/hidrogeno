@@ -27,7 +27,17 @@ setup(
     author="Nicolás Mendoza",
     author_email='nicolas.mendoza@yandex.com',
     url='https://github.com/niccolasmendoza/hydrogen',
-    packages=find_packages(include=['hydrogen']),
+    packages=[
+        'hydrogen/',
+        'hydrogen/core',
+        'hydrogen/core/db',
+        'hydrogen/core/galaxy',
+        'hydrogen/core/geometry',
+        'hydrogen/core/wheater',
+        'hydrogen/core/wheater/job',
+        'hydrogen/core/wheater/statistics',
+
+    ],
     entry_points={
         'console_scripts': [
             'hydrogen=hydrogen.cli:main'

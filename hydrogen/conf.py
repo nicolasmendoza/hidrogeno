@@ -3,7 +3,6 @@
 En este módulo se guardan common settings para la app.
 """
 
-
 # http://docs.sqlalchemy.org/en/latest/core/engines.html
 # Base de datos en donde se volcaran los registros del JOB
 DATABASE_URL = 'sqlite:///ml.db'
