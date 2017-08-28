@@ -48,9 +48,24 @@ API Rest.
 https://github.com/nicolasmendoza/microservice
 
 
-Documentación.
---------------
-Done.(waiting ...build).
+Uso de la librería
+--------------------
+.. code:: python
+
+    from hidrogeno.galaxy.core.simulator import SpaceTime
+   
+    # SpaceTime es un generator. galaxy() es un método/shortcut, de clase, que fabrica 
+    # un SpaceTime con los planetas y configuración por defecto.
+    space_time = SpaceTime.galaxy(from_day=0, to_day=3000) 
+
+    for stream in space_time:
+         for data in stream:
+                # envíamos el (día, el clima, y el nivel de precipitación) para estadísticas.
+                coro_stats.send(
+                    (data.day, data.wheater, data.precipitation)
+                )
+        
+    
 
 Cobertura de tests.
 -------------------
