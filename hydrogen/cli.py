@@ -21,6 +21,7 @@ ONE_FERENGI_YEAR = 360
 
 
 def generate_entropy():
+    click.clear()
     click.echo('| |  | (_)   | |')
     click.echo('| |__| |_  __| |')
     click.echo("|  __  | |/ _` | '__/ _ \ / _` |/ _ \ '_ \ / _ ")
@@ -40,18 +41,24 @@ class CommandLineOption(enum.IntEnum):
 @click.option('--generardatos', default=365*10)
 def init_db():
 
-    click.echo('Procesando datos...')
+    if conf.DATABASE_URL != conf.DEFAULT_DB:   #wk. contratiempo.
+        click.echo('Procesando datos...')
 
-    # Creamos un object WheaterWatcher y le indicamos el número de lotes a envíar a db.
-    watcher = WeatherWatcher(lot_size=conf.JOB_BATCHER)
-    space_time = SpaceTime.galaxy(from_day=0, to_day=conf.JOB_WORK)
+        # Creamos un object WheaterWatcher y le indicamos el número de lotes a envíar a db.
+        watcher = WeatherWatcher(lot_size=conf.JOB_BATCHER)
+        space_time = SpaceTime.galaxy(from_day=0, to_day=conf.JOB_WORK)
 
-    with click.progressbar(space_time, length=conf.JOB_WORK) as stream:
-        for stream_data in stream:
-            watcher.analyze(stream_data)
+        with click.progressbar(space_time, length=conf.JOB_WORK) as stream:
+            for stream_data in stream:
+                watcher.analyze(stream_data)
 
-    click.echo('done!')
-
+        click.echo('done!')
+    else:
+        click.echo('!'*80)
+        click.echo('\n\n Antes de continuar necesitas setear la variable de entorno HIDROGENO_DB con la '
+                   'URL de la base de datos a usar')
+        click.echo('\n Para más información ver la documentación.\n')
+        click.echo('!' * 80)
 
 def main():
     generate_entropy()
