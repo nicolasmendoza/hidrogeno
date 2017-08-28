@@ -99,10 +99,6 @@ Packages
 
     hidrogeno/hydrogen/core/wheater/statistics/
 
-Cobertura de tests.
--------------------
-UP. in progress...
-
 
 
 
