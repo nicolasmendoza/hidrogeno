@@ -59,8 +59,8 @@ def betasoide_planet():
     """Betasoide planet fixture"""
     return Planet.new_betasoide()
 
-def test_fixture_betasoide_planet(betasoide_planet):
-    assert betasoide_planet._velocity == 3 * clockwise_anticlock
+def test_fixture_betasoide_planet(betasoide_planet, clockwise_counterclock):
+    assert betasoide_planet._velocity == 3 * clockwise_counterclock
     assert betasoide_planet._sun_distance == 2000
 
 @pytest.fixture
@@ -71,7 +71,7 @@ def planet_position_are_aligned():
 
 def test_planet_position_are_aligned(planet_position_are_aligned):
     assert planet_position_are_aligned == 'planets_are_aligned'
-   
+
 
 @pytest.fixture()
 def planet_position_are_aligned_with_sun():
