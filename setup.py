@@ -9,6 +9,7 @@ with open('README.rst') as readme_file:
 requirements = [
     'Click>=6.0',
     'SQLAlchemy',
+    'enum34'
 ]
 
 setup_requirements = [
