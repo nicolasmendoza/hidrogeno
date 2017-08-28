@@ -37,7 +37,7 @@ Installation
 -----------
 pip install git+https://github.com/nicolasmendoza/hidrogeno.git
 
-screncast: https://vimeo.com/231359435
+screencast: https://vimeo.com/231359435
 
 
 
