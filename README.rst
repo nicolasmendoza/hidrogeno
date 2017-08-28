@@ -4,6 +4,10 @@ hidrógeno
 
 .. image:: https://travis-ci.org/nicolasmendoza/hidrogeno.svg?branch=master
     :target: https://travis-ci.org/nicolasmendoza/hidrogeno
+    
+.. image:: https://codecov.io/gh/nicolasmendoza/hidrogeno/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/nicolasmendoza/hidrogeno
+  
 Hydrogen is a library and command line utility.
 
 * Ejercicio de programación.
