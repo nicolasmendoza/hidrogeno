@@ -77,15 +77,26 @@ Uso de la librería
 
      
         ... ...
-        
+    
+Packages
+--------------------   
+
 .. code:: python
 
-     # Contiene modelo de dato usado para persist.
+     # contiene modelo de datos usado para persist.
     hidrogeno/hydrogen/core/db/models.py
-     # Contiene la clases singletone ClockWise y la clase Planet.
+    
+    # contiene la clase singletone ClockWise y la clase Planet.
     hidrogeno/hydrogen/core/galaxy/planet.py
-    # Contiene: PlanetPosition, GalacticReport, y SpaceTime
+    
+    # contiene: PlanetPosition, GalacticReport, y SpaceTime
     hidrogeno/hydrogen/core/galaxy/simulator.py
+    
+    hidrogeno/hydrogen/core/geometry/
+    
+    hidrogeno/hydrogen/core/wheater/job/
+
+    hidrogeno/hydrogen/core/wheater/statistics/
 
 Cobertura de tests.
 -------------------
