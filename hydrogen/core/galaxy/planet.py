@@ -42,7 +42,7 @@ class Planet(object):
 
     @classmethod
     def new_ferengi(cls):
-        """Permite crear un nuevo planeta de tipo Ferengi."""
+        """Fabrica un planeta de tipo Ferengi con sus default atributos."""
         kwargs = {
             'name': 'Ferengi',
             'velocity': 1,
@@ -53,7 +53,7 @@ class Planet(object):
 
     @classmethod
     def new_vulcano(cls):
-        """Permite crear un nuevo planeta de tipo Vulcano."""
+        """Fabrica un planeta de tipo Ferengi con sus default atributos."""
         kwargs = {
             'name': 'Vulcano',
             'velocity': 5,
@@ -64,7 +64,7 @@ class Planet(object):
 
     @classmethod
     def new_betasoide(cls):
-        """Permite crear un nuevo planetar de tipo Betasoide."""
+        """Fabrica un planeta de tipo Ferengi con sus default atributos."""
         kwargs = {
             'name': 'Betasoide',
             'velocity': 3,
