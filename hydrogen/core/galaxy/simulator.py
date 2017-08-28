@@ -126,7 +126,7 @@ class SpaceTime(object):
             return data_stream
 
         # si los planetas forman un triángulo y el sol está dentro del triángulo
-        elif calc.is_point_inside_triangle(*planet_positions, self.Sun):
+        elif calc.is_point_inside_triangle(planet_positions, self.Sun):
             return GalacticReport(current_cycle, day, PlanetPosition.planets_sun_triangle.value, {
                 'perimeter': calc.get_perimeter(*planet_positions),
                 'shape': 'triangle'
