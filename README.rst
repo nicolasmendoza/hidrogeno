@@ -27,7 +27,6 @@ Features
 * Space Time /Data Stream generator.
 * WheaterForecast - Coroutine stats.
 * Memoization.
-* ...
 
 Requerimientos:
 --------------
